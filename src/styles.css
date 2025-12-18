@@ -1,0 +1,87 @@
+.app {
+  font-family: sans-serif;
+}
+
+.navbar {
+  grid-area: navbar;
+}
+
+.topbar {
+  grid-area: topbar;
+}
+
+.main_pane {
+  grid-area: main;
+  overflow: auto;
+}
+
+.miscbar {
+  grid-area: miscbar;
+}
+
+@media (orientation: landscape) {
+  .app {
+    display: grid;
+    grid-template-areas:
+      "navbar topbar miscbar"
+      "navbar main miscbar";
+
+    grid-template-columns: auto 1fr 12rem;
+    grid-template-rows: 2rem 1fr;
+
+    /* gap: 1rem; */
+    padding: 0.5rem;
+  }
+
+  .navbar {
+    display: flex !important;
+    flex-direction: column;
+    /* margin-left: -0.75rem; */
+  }
+
+  .nav-toggle {
+    display: none;
+  }
+  .navbar::after {
+    content: "";
+    position: absolute;
+    width: 0.75rem;
+    height: 6rem;
+    top: 50%;
+    bottom: 0;
+    right: 2px;
+    background: grey;
+    translate: 8px -50%;
+    pointer-events: none;
+    border-radius: 4rem;
+    z-index: 3;
+  }
+  .resizer {
+    resize: horizontal;
+    width: 15rem;
+    height: 6rem;
+    min-width: 5rem;
+    max-width: 25rem;
+    transform-origin: 0 100%;
+    translate: 8px -50%;
+    clip-path: inset(calc(100% - 12px) 2px 0 calc(100% - 14px));
+    scale: 1 8;
+    opacity: 0;
+  }
+}
+
+@media (orientation: portrait) {
+  .app {
+    display: grid;
+    grid-template-areas:
+      "navbar"
+      "topbar"
+      "main"
+      "miscbar";
+
+    grid-template-rows: auto 2rem 1fr 3rem;
+
+    gap: 0px;
+    padding: 0px;
+  }
+}

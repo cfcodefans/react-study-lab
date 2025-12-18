@@ -1,0 +1,29 @@
+{
+  "name": "react-study-lab",
+  "version": "1.0.0",
+  "description": "react-study-lab",
+  "keywords": ["typescript", "react", "starter"],
+  "main": "src/index.tsx",
+  "type": "module",
+  "dependencies": {
+    "loader-utils": "3.3.1",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-router-dom": "latest",
+    "lodash": "4.17.21"
+  },
+  "devDependencies": {
+    "react-scripts": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "latest",
+    "@types/lodash": "4.17.21"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
+}
