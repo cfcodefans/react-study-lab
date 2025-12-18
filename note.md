@@ -40,3 +40,5 @@ before
   ]
 }
 ```
+
+have to use `http://localhost:4000/pages/index.html` as entrance

@@ -1,7 +1,7 @@
 import MainFrame, { INavProps, IPaneProps } from "./layout";
 import { NAV_NODES } from "./pages/index";
 import "./styles.css";
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, HashRouter, Routes, Route } from "react-router";
 import React, {JSX, Suspense } from "react";
 import { deepTraverse } from "./commons";
 
@@ -18,7 +18,7 @@ function PaneLoader(paneProps: IPaneProps): JSX.Element {
 export default function App() {
   return (
     <div className="app w-full h-full gap-2">
-      <BrowserRouter>
+      <HashRouter>
         <MainFrame navProps={{ rootNodes: NAV_NODES }}>
           <Routes>
             {deepTraverse(NAV_NODES).map((node, i) => {
@@ -32,7 +32,7 @@ export default function App() {
             })}
           </Routes>
         </MainFrame>
-      </BrowserRouter>
+      </HashRouter>
     </div>
   );
 }

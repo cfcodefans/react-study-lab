@@ -25,6 +25,20 @@ export const NAV_NODES: IPaneProps[] = iterateTree(
         },
       ],
     },
+    {
+      value: "learn-react",
+      label: "LEARN REACT",
+      level: 1,
+      children: [
+        {
+          value: "describing-the-ui",
+          label: "Describing the UI",
+          level: 2,
+          pane: lazy(() => import("./describing-the-ui")),
+          children: null
+        }
+      ]
+    }
   ],
   (node: IPaneProps, ancestors: IPaneProps[]) => {
     node.paths = ancestors.map((an) => an.value)

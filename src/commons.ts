@@ -123,3 +123,7 @@ export function iterateTree<ITNode extends INode<ITNode>>(roots: ITNode[], visit
 
   return roots
 }
+
+export function mkMockImgUrl(keyword: string, width: number = 120, height: number = 80): string {
+  return `https://dummyjson.com/image/${width}x${height}?text=${keyword}&fontSize=15`
+} 
