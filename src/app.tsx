@@ -2,7 +2,7 @@ import MainFrame, { INavProps, IPaneProps } from "./layout";
 import { NAV_NODES } from "./pages/index";
 import "./styles.css";
 import { BrowserRouter, Routes, Route } from "react-router";
-import React, { Suspense } from "react";
+import React, {JSX, Suspense } from "react";
 import { deepTraverse } from "./commons";
 
 function PaneLoader(paneProps: IPaneProps): JSX.Element {

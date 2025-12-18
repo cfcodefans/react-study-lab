@@ -1,3 +1,5 @@
+before
+```json
 {
   "name": "react-study-lab",
   "version": "1.0.0",
@@ -25,9 +27,10 @@
     "vite": "^7.3.0"
   },
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   },
   "browserslist": [
     ">0.2%",
@@ -36,3 +39,4 @@
     "not op_mini all"
   ]
 }
+```

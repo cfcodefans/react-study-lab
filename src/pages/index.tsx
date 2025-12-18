@@ -1,6 +1,6 @@
-import { IPaneProps } from "../layout";
-import { lazy } from "react";
-import { iterateTree } from "../commons";
+import { IPaneProps } from "../layout"
+import { lazy } from "react"
+import { iterateTree } from "../commons"
 
 export const NAV_NODES: IPaneProps[] = iterateTree(
   [
@@ -27,9 +27,9 @@ export const NAV_NODES: IPaneProps[] = iterateTree(
     },
   ],
   (node: IPaneProps, ancestors: IPaneProps[]) => {
-    node.paths = ancestors.map((an) => an.value);
-    node.paths.push(node.value);
-    console.dir(node);
-    return null;
+    node.paths = ancestors.map((an) => an.value)
+    node.paths.push(node.value)
+    console.dir(node)
+    return null
   }
-) as IPaneProps[];
+) as IPaneProps[]
