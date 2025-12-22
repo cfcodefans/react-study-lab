@@ -1,4 +1,4 @@
-import { JSX, MouseEventHandler, ReactNode, useState } from "react"
+import { JSX, MouseEventHandler, ReactNode, RefObject, useEffect, useRef, useState } from "react"
 import { mkMockImgUrl } from "../commons"
 
 namespace LAB_1 {
@@ -127,11 +127,122 @@ namespace LAB_2 {
     }
 }
 
+namespace LAB_3 {
+    function Clock({ time }: { time: string }): JSX.Element {
+        return <div>
+            <h1>{time}</h1>
+            <input type="text" className="rounded-lg bg-slate-200 px-2 py-1" />
+        </div>
+    }
+    export function App(): JSX.Element {
+        const [time, setTime] = useState<string>("--:--:--")
+        useEffect(() => {
+            const handler: number = setInterval(() => {
+                const now: Date = new Date()
+                setTime(`${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`)
+            }, 900)
+            return () => clearInterval(handler)
+        }, [])
+        return <Clock time={time} />
+    }
+}
+
+namespace LAB_4 {
+    async function sendMessage(message: string): Promise<void> {
+        return new Promise((resolver, reject) => {
+            setTimeout(() => {
+                alert(`${message} is sent`)
+                resolver(null)
+            }, 3000)
+        })
+    }
+
+    export function Form(): JSX.Element {
+        const [isSent, setIsSent] = useState<boolean>(false)
+        const [message, setMessage] = useState<string>("")
+
+        //Use a ref to track if the component is currently mounted
+        const isMounted: RefObject<boolean> = useRef<boolean>(true)
+        useEffect(() => {
+            //Cleanup function sets isMounted to false when component leaves the screen
+            return () => { isMounted.current = false; }
+        }, [])
+
+        if (isSent) {
+            return <h1>The message: ${message} is sent</h1>
+        }
+        return <form 
+            className="flex flex-row items-center gap-2"
+            onSubmit={async (fe) => {
+                fe.preventDefault()
+                setIsSent(true)
+                await sendMessage(message)
+                if (isMounted.current) {
+                    setMessage("")
+                    setIsSent(false)
+                }
+            }}>
+            <textarea placeholder="Message" 
+                className="px-2 py-1 rounded-lg bg-slate-200"
+                value={message} 
+                onChange={(ce) => setMessage(ce.target.value)} />
+            <button type="submit" disabled={isSent}
+                className="rounded-full bg-cyan-500 px-2 py-1 text-sm font-semibold text-white"
+            >Send</button>
+        </form>
+    }
+}
+
+namespace LAB_5 {
+    export function Counter(): JSX.Element {
+        const [count, setCount] = useState<number>(0)
+        return <div className="flex flex-row items-center gap-2">
+            <h1>{count}</h1>
+            <button 
+                className="rounded-full bg-cyan-500 px-2 py-1 text-sm font-semibold text-white"
+                onClick={(me) => {
+                    setCount(count + 1)
+                    setCount(count + 1)
+                    setCount(count + 1)
+                }}>+3 X</button>
+
+            <button className="rounded-full bg-cyan-500 px-2 py-1 text-sm font-semibold text-white"
+                onClick={(me) => {
+                    setCount(n => n + 1)
+                    setCount(n => n + 1)
+                    setCount(n => n + 1)
+                }}>+3 Y</button>
+
+            <button className="rounded-full bg-cyan-500 px-2 py-1 text-sm font-semibold text-white"
+                onClick={(me) => {
+                    setCount(count + 2)
+                    setCount(n => n + 2)
+                }}>+4 Y</button>
+        </div>
+    }
+}
+
 export default function Page(): JSX.Element {
     return <>
-        <h2>Responding to events</h2>
-        <LAB_1.App />
-        <h2>State: a component’s memory</h2>
-        <LAB_2.Gallery />
+        <section className="  rounded-lg p-2 m-3">
+            <h2>Responding to events</h2>
+            <LAB_1.App />
+        </section>
+        <section className="  rounded-lg p-2 m-3">
+            <h2>State: a component's memory</h2>
+            <LAB_2.Gallery />
+        </section>
+        <section className="  rounded-lg p-2 m-3">
+            <h2>Render and Commit</h2>
+            <LAB_3.App />
+        </section>
+        <section className="  rounded-lg p-2 m-3">
+            <h2>State as a Snapshot</h2>
+            <LAB_4.Form />
+        </section>
+        <section className="  rounded-lg p-2 m-3">
+            <h2>Queueing a Series of State Updates</h2>
+            <LAB_5.Counter />
+        </section>
     </>
 } 

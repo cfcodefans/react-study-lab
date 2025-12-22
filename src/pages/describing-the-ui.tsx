@@ -194,17 +194,30 @@ namespace LAB_5_2 {
 export default function Page(): JSX.Element {
     return <>
         <a href="https://react.dev/learn/describing-the-ui" target="_blank"><h1>Describing the UI</h1></a>
-        <h2>1. Your first Component</h2>
-        <LAB_1.Component />
-        <h2>2. Passing props to a component </h2>
-        <LAB_2.Profile />
-        <h2>3. Conditional rendering </h2>
-        <LAB_3.PackingList />
-        <h2>4. Rendering lists</h2>
-        <LAB_4.List />
-        <h2>The Render Tree</h2>
-        <LAB_5_1.App />
-        <h2>The Render Tree</h2>
-        <LAB_5_2.App />
+
+        <section className="border rounded-lg p-2 m-3">
+            <h2>1. Your first Component</h2>
+            <LAB_1.Component />
+        </section>
+        <section className="border rounded-lg p-2 m-3">
+            <h2>2. Passing props to a component </h2>
+            <LAB_2.Profile />
+        </section>
+        <section className="border rounded-lg p-2 m-3">
+            <h2>3. Conditional rendering </h2>
+            <LAB_3.PackingList />
+        </section>
+        <section className="border rounded-lg p-2 m-3">
+            <h2>4. Rendering lists</h2>
+            <LAB_4.List />
+        </section>
+        <section className="border rounded-lg p-2 m-3">
+            <h2>The Render Tree</h2>
+            <LAB_5_1.App />
+        </section>
+        <section className="border rounded-lg p-2 m-3">
+            <h2>The Render Tree</h2>
+            <LAB_5_2.App />
+        </section>
     </>
 }

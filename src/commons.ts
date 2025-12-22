@@ -1,4 +1,5 @@
 import _ from "lodash"
+import { RefObject, useCallback, useEffect, useRef } from "react";
 
 export type TTraverser<N extends INode<N>> = (node: N) => N[]
 export interface IComparable {
@@ -126,4 +127,41 @@ export function iterateTree<ITNode extends INode<ITNode>>(roots: ITNode[], visit
 
 export function mkMockImgUrl(keyword: string, width: number = 120, height: number = 80): string {
   return `https://dummyjson.com/image/${width}x${height}?text=${keyword}&fontSize=15`
+} 
+
+export function useSafeAsync(): (fn: () => void) => void {
+  const isMounted: RefObject<boolean> = useRef<boolean>(true)
+  useEffect(() => {
+    return () => { isMounted.current = false; }
+  }, [])
+
+  //Returns a function that only executes the callback if mounted
+  const safeRunner = useCallback((fn: () => void) => {
+    if (isMounted.current) fn()
+  }, [])
+  return safeRunner
+} 
+
+export async function delay<T = void>(ms: number, 
+  value: T, 
+  isReject: boolean = false,
+  signal?: AbortSignal): Promise<T> {
+  return new Promise((resolver, reject) => {
+    if (signal.aborted) {
+      return Promise.reject(new Error(`Aborted immediately for call with ${value}`))
+    }
+
+    const timer: number = setTimeout(() => {
+      if (isReject) reject(value)
+      else resolver(value)
+    }, ms)
+
+    // if  the signal is aborted, clear timeout and reject immediately
+    signal?.addEventListener("abort", () => {
+      clearTimeout(timer)
+      reject(new Error(`Aborted by user for call with ${value}`))
+    },
+      // Use { once: true } so the listener is automatically removed after firing
+      { once: true })
+  })
 } 
