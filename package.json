@@ -20,13 +20,14 @@
     "@types/lodash": "4.17.21",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@typescript/native-preview": "^7.0.0-dev.20251220.1",
     "@vitejs/plugin-react": "^5.1.2",
     "typescript": "latest",
     "vite": "^7.3.0"
   },
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
+    "start": "tsgo && vite",
+    "build": "tsgo && vite build",
     "preview": "vite preview"
   },
   "browserslist": [

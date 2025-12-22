@@ -1,6 +1,5 @@
-import { JSX, ReactNode } from "react"
+import { JSX, ReactNode, useState } from "react"
 import { mkMockImgUrl } from "../commons"
-import { JsxEmit } from "typescript";
 
 namespace LAB_1 {
     export function Profile(): JSX.Element {
@@ -110,6 +109,88 @@ namespace LAB_4 {
     }
 }
 
+namespace LAB_5_1 {
+    export const QUOTES: string[] = [
+        "Don't let yesterday take up too much of today.” — Will Rogers",
+        "Ambition is putting a ladder against the sky.",
+        "A joy that's shared is a joy made double."
+    ]
+
+    export function Copyright({ year }: { year: number }): JSX.Element {
+        return <p className="small">©️{year}</p>
+    }
+
+    export function FancyText({ title, text }: { title?: boolean, text: string }): JSX.Element {
+        return title ? <h1 className="fancy title">{text}</h1>
+            : <h3 className="fancy cursive">{text}</h3>
+    }
+
+    export function InspirationGenerator({ children }: { children: ReactNode }): JSX.Element {
+        const [index, setIndex] = useState<number>(0)
+        function next(): void {
+            setIndex((index + 1) % QUOTES.length)
+        }
+        return <>
+            <p>Your inspiration quote is</p>
+            <FancyText text={QUOTES[index]} />
+            <button onClick={next}>Inspire me again</button>
+            {children}
+        </>
+    }
+
+    export function App(): JSX.Element {
+        return <>
+            <FancyText title text="Get Inspired App" />
+            <InspirationGenerator>
+                <Copyright year={2024} />
+            </InspirationGenerator>
+        </>
+    }
+}
+
+namespace LAB_5_2 {
+    declare type TInspiration = { type: "quote" | "color", value: string }
+
+    export const QUOTES: TInspiration[] = [
+        { type: 'quote', value: "Don’t let yesterday take up too much of today.” — Will Rogers" },
+        { type: 'color', value: "#B73636" },
+        { type: 'quote', value: "Ambition is putting a ladder against the sky." },
+        { type: 'color', value: "#256266" },
+        { type: 'quote', value: "A joy that's shared is a joy made double." },
+        { type: 'color', value: "#F9F2B4" },
+    ]
+
+    function ColorBox({ color }: { color: string }): JSX.Element {
+        return <div className="w-[3rem] h-[3rem]" style={{ backgroundColor: color }} />
+    }
+
+    export function InspirationGenerator({ children }: { children: ReactNode }): JSX.Element {
+        const [index, setIndex] = useState<number>(0)
+        function next(): void {
+            setIndex((index + 1) % QUOTES.length)
+        }
+
+        const { type, value } = QUOTES[index]
+        
+        return <>
+            <p>Your inspiration {type} is</p>
+            {type === "quote" ?
+                <LAB_5_1.FancyText text={value} />
+                : <ColorBox color={value} />}
+            <button onClick={next}>Inspire me again</button>
+            {children}
+        </>
+    }
+    export function App(): JSX.Element {
+        return <>
+            <LAB_5_1.FancyText title text="Get Inspired App" />
+            <InspirationGenerator>
+                <LAB_5_1.Copyright year={2024} />
+            </InspirationGenerator>
+        </>
+    }
+}
+
 export default function Page(): JSX.Element {
     return <>
         <a href="https://react.dev/learn/describing-the-ui" target="_blank"><h1>Describing the UI</h1></a>
@@ -121,5 +202,9 @@ export default function Page(): JSX.Element {
         <LAB_3.PackingList />
         <h2>4. Rendering lists</h2>
         <LAB_4.List />
+        <h2>The Render Tree</h2>
+        <LAB_5_1.App />
+        <h2>The Render Tree</h2>
+        <LAB_5_2.App />
     </>
 }

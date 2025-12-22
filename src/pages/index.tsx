@@ -10,14 +10,14 @@ export const NAV_NODES: IPaneProps[] = iterateTree(
       level: 1,
       children: [
         {
-          value: "sub_basic-1",
+          value: "tic-tac-toe",
           label: "Tutorial: Tic-Tac-Toe",
           level: 2,
           pane: lazy(() => import("./tutorial-tic-tac-toe")),
           children: null,
         },
         {
-          value: "sub_basic-2",
+          value: "thinking-in-react",
           label: "Thinking in React",
           level: 2,
           pane: lazy(() => import("./thinking-in-react")),
@@ -36,8 +36,15 @@ export const NAV_NODES: IPaneProps[] = iterateTree(
           level: 2,
           pane: lazy(() => import("./describing-the-ui")),
           children: null
+        },
+        {
+          value: "adding-interactivity",
+          label: "Adding Interactivity",
+          level: 2,
+          pane: lazy(() => import("./adding-interactivity")),
+          children: null
         }
-      ]
+      ],
     }
   ],
   (node: IPaneProps, ancestors: IPaneProps[]) => {

@@ -77,7 +77,7 @@ function toggleSmoothCollapse(elementId: string): void {
   }
 }
 
-export function NavBar({ rootNodes }: INavProps): JSX.Element {
+function _NavBar({ rootNodes }: INavProps): JSX.Element {
   return (
     <nav className="navbar relative cf-collapose box-content portrait:h-[3rem]" id="menu_tree"    >
       <div className=" bg-slate-200 
@@ -119,8 +119,10 @@ export function NavBar({ rootNodes }: INavProps): JSX.Element {
   )
 }
 
+export const NavBar = React.memo(_NavBar)
+
 export function TopBar({ children }: IChildrenProps): JSX.Element {
-  return <header className="topbar bg-slate-100 landscape:rounded-lg p-1">
+  return <header className="topbar bg-slate-200 landscape:rounded-lg p-1">
     topbar
   </header>
 }
@@ -132,7 +134,7 @@ export function MiscBar({ children }: IChildrenProps): JSX.Element {
 }
 
 export function MainPane({ children }: IChildrenProps): JSX.Element {
-  return <main className="main_pane landscape:rounded-lg bg-slate-50 p-2">
+  return <main className="main_pane landscape:rounded-lg bg-white p-2">
     {children}
   </main>
 }
