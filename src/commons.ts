@@ -1,5 +1,9 @@
 import _ from "lodash"
-import { RefObject, useCallback, useEffect, useRef } from "react";
+import {
+  JSX,
+  MouseEventHandler,
+  ReactNode,
+  RefObject, useCallback, useEffect, useRef } from "react";
 
 export type TTraverser<N extends INode<N>> = (node: N) => N[]
 export interface IComparable {
@@ -147,7 +151,7 @@ export async function delay<T = void>(ms: number,
   isReject: boolean = false,
   signal?: AbortSignal): Promise<T> {
   return new Promise((resolver, reject) => {
-    if (signal.aborted) {
+    if (signal?.aborted) {
       return Promise.reject(new Error(`Aborted immediately for call with ${value}`))
     }
 

@@ -1,7 +1,8 @@
 import _ from "lodash"
-import React, { JSX, ReactNode, ExoticComponent } from "react"
+import React, { JSX, MouseEventHandler, ReactNode, ExoticComponent } from "react"
 import { NavLink } from "react-router-dom"
 import { Compare, INode } from "./commons"
+import "./styles.css"
 
 export interface IChildrenProps {
   children?: ReactNode
@@ -87,12 +88,12 @@ function _NavBar({ rootNodes }: INavProps): JSX.Element {
       landscape:flex-col portrait:flex-row portrait:item-start portrait:overflow-hidden portrait:min-h-[3rem]"      >
         <h1 className="text-center 
           bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white
-          rounded-md portrait:hidden landscape:w-full        "        >
+          rounded-md portrait:hidden landscape:w-full"        >
           React-Study-Lab
         </h1>
         <h1 className="text-center 
           bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white
-         rounded-md landscape:hidden w-[2rem] h-[2rem]"        >
+         rounded-md landscape:hidden w-[2rem] h-[2rem]">
           R
         </h1>
         <ol type="1" className="w-full list-decimal box-border ps-6 ">
@@ -165,3 +166,15 @@ export interface INavProps {
 export interface IMainFrameProps extends IChildrenProps {
   navProps: INavProps
 }
+
+
+export function BtnSm({ onClick,
+  children }: {
+    children: ReactNode,
+    onClick?: MouseEventHandler }): JSX.Element {
+      
+  return <button className="btn-primary"
+    onClick={onClick}>
+    {children}
+  </button>
+} 

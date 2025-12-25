@@ -1,5 +1,7 @@
-import { JSX, MouseEventHandler, ReactNode, RefObject, useEffect, useRef, useState } from "react"
-import { mkMockImgUrl } from "../commons"
+import { JSX, MouseEventHandler, PointerEvent, ReactNode, RefObject, useEffect, useRef, useState } from "react"
+import { delay, mkMockImgUrl } from "../commons"
+import { useImmer } from "use-immer"
+import { BtnSm } from "../layout"
 
 namespace LAB_1 {
     function Button({ children, onClick }: { children: ReactNode, onClick: MouseEventHandler }): JSX.Element {
@@ -198,26 +200,217 @@ namespace LAB_5 {
         const [count, setCount] = useState<number>(0)
         return <div className="flex flex-row items-center gap-2">
             <h1>{count}</h1>
-            <button 
-                className="rounded-full bg-cyan-500 px-2 py-1 text-sm font-semibold text-white"
+            <BtnSm
                 onClick={(me) => {
                     setCount(count + 1)
                     setCount(count + 1)
                     setCount(count + 1)
-                }}>+3 X</button>
+                }}>+3 X</BtnSm>
 
-            <button className="rounded-full bg-cyan-500 px-2 py-1 text-sm font-semibold text-white"
+            <BtnSm
                 onClick={(me) => {
                     setCount(n => n + 1)
                     setCount(n => n + 1)
                     setCount(n => n + 1)
-                }}>+3 Y</button>
+                }}>+3 Y</BtnSm>
 
-            <button className="rounded-full bg-cyan-500 px-2 py-1 text-sm font-semibold text-white"
+            <BtnSm
                 onClick={(me) => {
                     setCount(count + 2)
                     setCount(n => n + 2)
-                }}>+4 Y</button>
+                }}>+4 Y</BtnSm>
+        </div>
+    }
+
+    export function RequestTracker(): JSX.Element {
+        const [pending, setPending] = useState<number>(0)
+        const [completed, setCompleted] = useState<number>(0)
+
+        return <div className="flex flex-row items-center gap-2">
+            <h3>Pending: {pending}</h3>
+            <h3>Completed: {completed}</h3>
+            <BtnSm
+                onClick={async (me) => {
+                    setPending(pending + 1)
+                    await delay(3000, null)
+                    setPending(p => p - 1)
+                    setCompleted(c => c + 1)
+                }}>Buy</BtnSm>
+        </div>
+    }
+}
+
+namespace LAB_6 {
+    export declare type TPoint = { x: number, y: number }
+    export function MovingDot(): JSX.Element {
+        const [pos, setPos] = useState<TPoint>({ x: 0, y: 0 })
+        const x: number = Math.round(pos.x), y: number = Math.round(pos.y)
+        return <div className="relative w-100 h-[10rem] rounded-lg bg-slate-100"
+            onMouseMove={(pe) => {
+                setPos({ x: pe.nativeEvent.offsetX, y: pe.nativeEvent.offsetY })
+            }}>
+            <div style={{ transform: `translate(${x}px, ${y}px)`,
+                left: -10, top: -10, width: 20, height: 20 }}
+                className="rounded-full absolute bg-red-300" >
+            </div>
+        </div>
+    }
+
+    declare type TPerson = {
+        name: string
+        artwork: {
+            title: string,
+            city: string,
+            image: string
+        }
+    }
+
+    export function Form(): JSX.Element {
+        const [person, updatePerson] = useImmer<TPerson>({
+            name: 'Niki de Saint Phalle',
+            artwork: {
+                title: "Blue Nana",
+                city: "Hamburg",
+                image: "Sd1AgUOm.jpg",
+            }
+        })
+
+        const { artwork } = person
+
+        return <form className="flex flex-col gap-2 my-2">
+            <label>Name: 
+                <input type="text" className="px-2 py-1 rounded-lg bg-slate-200" value={person.name}
+                    onChange={(ce) => {
+                        updatePerson(draft => { 
+                            draft.name = ce.target.value
+                        })
+                    }} />
+            </label>
+            <label>Title: 
+                <input type="text" className="px-2 py-1 rounded-lg bg-slate-200" value={artwork.title}
+                    onChange={(ce) => {
+                        updatePerson(draft => {
+                            draft.artwork.title = ce.target.value
+                        })
+                    }} />
+            </label>
+            <label>City: 
+                <input type="text" className="px-2 py-1 rounded-lg bg-slate-200" value={artwork.city}
+                    onChange={(ce) => {
+                        updatePerson(draft => {
+                            draft.artwork.city = ce.target.value
+                        })
+                    }} />
+            </label>
+            <label>Image: 
+                <input type="text" className="px-2 py-1 rounded-lg bg-slate-200" value={artwork.image}
+                    onChange={(ce) => {
+                        updatePerson(draft => {
+                            draft.artwork.image = ce.target.value
+                        })
+                    }} />
+            </label>
+            <p>
+                <i>{artwork.title}</i>
+                {' by '}
+                {person.name}
+                <br />
+                (located in {artwork.city})
+            </p>
+            <img src={mkMockImgUrl(artwork.image)} 
+                width={120} height={80}
+                alt={artwork.title} className="rounded-lg" />
+        </form>
+    }
+}
+
+namespace LAB_7 {
+    export declare type TPoint = { x: number, y: number }
+    declare type TShapeState = {
+        color: string, position: TPoint
+    }
+    function Box({ children, 
+        onMove, 
+        color, 
+        position }: { 
+            children: ReactNode, 
+            onMove: (pos: TPoint) => void } & TShapeState): JSX.Element {
+        const [lastPos, setLastPos] = useState<TPoint>(null)
+        const { x, y } = position
+        return <div 
+            onPointerDown={(pe: PointerEvent<HTMLDivElement>) => {
+                pe.currentTarget.setPointerCapture(pe.pointerId)
+                setLastPos({ x: pe.nativeEvent.offsetX, y: pe.nativeEvent.offsetY })
+            }}
+            onPointerMove={(pe: PointerEvent<HTMLDivElement>) => {
+                if (!lastPos) return
+                const newX: number = pe.nativeEvent.offsetX
+                const newY: number = pe.nativeEvent.offsetY
+                setLastPos({ x: newX, y: newY })
+                onMove({ x: newX - lastPos.x, y: newY - lastPos.y })
+            }}
+
+            onPointerUp={(pe: PointerEvent<HTMLDivElement>) => {
+                setLastPos(null)
+            }}
+            className="flex align-center absoulte w-[5rem] h-[5rem] rounded-full"
+            style={{ backgroundColor: color, translate: `translate(${x}px, ${y}px)` }}>
+            {children}
+        </div>
+    }
+
+    function Background({ pos }: { pos: TPoint }): JSX.Element {
+        const { x, y } = pos
+        return <div className="absolute w-[15rem] h-[15rem] bg-yellow-300"
+            style={{ transform: `translate(${x}px, ${y}px)` }}>
+        </div>
+    }
+
+    const INIT_POS: TPoint = { x: 0, y: 0 }
+}
+
+namespace LAB_8 {
+    let nextId: number = 0
+    declare type TArtist = { id: number, name: string }
+
+    export function List(): JSX.Element {
+        const [name, setName] = useState<string>("")
+        const [artists, setArtists] = useState<TArtist[]>([])
+        return <div className="rounded-lg flex flex-col gap-2">
+            <caption className="flex flex-row gap-2">
+                <input className="px-2 py-1 rounded-lg bg-slate-200"
+                    value={name} onChange={(ce) => setName(ce.target.value)} />
+                <button onClick={() => {
+                    setArtists([...artists, { name, id: ++nextId }])  
+                }}
+                    className="rounded-full bg-cyan-500 px-2 py-1 text-sm font-semibold text-white">
+                    Add
+                </button>
+            </caption>
+            <ol className="rounded-lg flex flex-col gap-2">{artists.map((artist, i) => {
+                const { id, name } = artist
+                return <li key={id} className="flex flex-row gap-2"><span>#{id} {name}</span>
+                    <BtnSm
+                        onClick={() => {
+                            setArtists(artists.filter(_artist => _artist.id !== id))
+                        }}>
+                        Delete
+                    </BtnSm>
+                </li>
+            })}</ol>
+        </div>
+    }
+
+    declare type TShape = { id: number, type: string, } & LAB_7.TPoint
+    export function ShapeEditor(): JSX.Element {
+        const [shapes, setShapes] = useState<TShape[]>([
+            { id: 0, type: "circle", x: 50, y: 100 },
+            { id: 1, type: "square", x: 150, y: 100 },
+            { id: 2, type: "circle", x: 250, y: 100 },
+        ])
+
+        return <div className="relative bg-cyan-100 h-[10rem] w-[10rem] rounded-lg">
+
         </div>
     }
 }
@@ -243,6 +436,21 @@ export default function Page(): JSX.Element {
         <section className="  rounded-lg p-2 m-3">
             <h2>Queueing a Series of State Updates</h2>
             <LAB_5.Counter />
+            <hr className="my-2" />
+            <LAB_5.RequestTracker />
+        </section>
+        <section className="  rounded-lg p-2 m-3">
+            <h2>Updating Objects in State</h2>
+            <LAB_6.MovingDot />
+            <hr className="my-2" />
+            <LAB_6.Form />
+        </section>
+
+        <section className="  rounded-lg p-2 m-3">
+            <h2>Updating Arrays in State</h2>
+            <LAB_8.List />
+            <hr className="my-2" />
+            <LAB_8.ShapeEditor />
         </section>
     </>
 } 

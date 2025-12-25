@@ -1,3 +1,19 @@
+@import "tailwindcss";
+
+/* Define 'btn' as a utility so Tailwind registers it */
+@utility btn {
+  @apply font-bold py-2 px-4 rounded transition duration-200 ease-in-out;
+}
+
+/* Now you can successfully @apply 'btn' */
+@utility btn-primary {
+  @apply btn bg-blue-500 text-white hover:bg-blue-700;
+}
+
+@utility btn-secondary {
+  @apply btn bg-gray-200 text-gray-800 border border-gray-400 hover:bg-gray-300;
+}
+
 .app {
   font-family: sans-serif;
 }
