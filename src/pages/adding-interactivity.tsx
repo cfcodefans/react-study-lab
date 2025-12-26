@@ -1,18 +1,12 @@
 import { JSX, MouseEventHandler, PointerEvent, ReactNode, RefObject, useEffect, useRef, useState } from "react"
 import { delay, mkMockImgUrl } from "../commons"
 import { useImmer } from "use-immer"
-import { BtnSm } from "../layout"
 
 namespace LAB_1 {
-    function Button({ children, onClick }: { children: ReactNode, onClick: MouseEventHandler }): JSX.Element {
-        return <button onClick={onClick}
-            className="rounded-full bg-cyan-500 px-2 py-1 text-sm font-semibold text-white"
-        >{children}</button>
-    }
     function Toolbar({ onPlayMovie, onUploadImage }: { onPlayMovie: MouseEventHandler, onUploadImage: MouseEventHandler }): JSX.Element {
         return <div className="flex flex-row gap-2">
-            <Button onClick={onPlayMovie}>Play Moive</Button>
-            <Button onClick={onUploadImage}>Upload Image</Button>
+            <button className="btn-sm" onClick={onPlayMovie}>Play Moive</button>
+            <button className="btn-sm" onClick={onUploadImage}>Upload Image</button>
         </div>
     }
     export function App(): JSX.Element {
@@ -117,10 +111,10 @@ namespace LAB_2 {
         }
         const { name, artist, description, url, alt } = SCULPTURE_LIST[index]
         return <>
-            <button onClick={handleNextClick}>Next</button>
+            <button className="btn-sm" onClick={handleNextClick}>Next</button>
             <h2><i>{name}</i> by {artist}</h2>
             <h3>({index + 1}) of {SCULPTURE_LIST.length}</h3>
-            <button onClick={handleShowMore}>
+            <button onClick={handleShowMore} className="btn-sm">
                 {showMore ? "Hide" : "Show"} details
             </button>
             {showMore && <p>{description}</p>}
@@ -189,7 +183,7 @@ namespace LAB_4 {
                 value={message} 
                 onChange={(ce) => setMessage(ce.target.value)} />
             <button type="submit" disabled={isSent}
-                className="rounded-full bg-cyan-500 px-2 py-1 text-sm font-semibold text-white"
+                className="btn-sm"
             >Send</button>
         </form>
     }
@@ -200,25 +194,25 @@ namespace LAB_5 {
         const [count, setCount] = useState<number>(0)
         return <div className="flex flex-row items-center gap-2">
             <h1>{count}</h1>
-            <BtnSm
+            <button className="btn-sm"
                 onClick={(me) => {
                     setCount(count + 1)
                     setCount(count + 1)
                     setCount(count + 1)
-                }}>+3 X</BtnSm>
+                }}>+3 X</button>
 
-            <BtnSm
+            <button className="btn-sm"
                 onClick={(me) => {
                     setCount(n => n + 1)
                     setCount(n => n + 1)
                     setCount(n => n + 1)
-                }}>+3 Y</BtnSm>
+                }}>+3 Y</button>
 
-            <BtnSm
+            <button className="btn-sm"
                 onClick={(me) => {
                     setCount(count + 2)
                     setCount(n => n + 2)
-                }}>+4 Y</BtnSm>
+                }}>+4 Y</button>
         </div>
     }
 
@@ -229,13 +223,13 @@ namespace LAB_5 {
         return <div className="flex flex-row items-center gap-2">
             <h3>Pending: {pending}</h3>
             <h3>Completed: {completed}</h3>
-            <BtnSm
+            <button className="btn-sm"
                 onClick={async (me) => {
                     setPending(pending + 1)
                     await delay(3000, null)
                     setPending(p => p - 1)
                     setCompleted(c => c + 1)
-                }}>Buy</BtnSm>
+                }}>Buy</button>
         </div>
     }
 }
@@ -381,21 +375,26 @@ namespace LAB_8 {
                 <input className="px-2 py-1 rounded-lg bg-slate-200"
                     value={name} onChange={(ce) => setName(ce.target.value)} />
                 <button onClick={() => {
-                    setArtists([...artists, { name, id: ++nextId }])  
+                    const insertedAt: number = artists.findIndex(a => a.name > name)
+                    const newArtist: TArtist = { name, id: ++nextId }
+                    if (insertedAt < 0)
+                        setArtists([...artists, newArtist])    
+                    else
+                        setArtists([...artists.slice(0, insertedAt), newArtist, ...artists.slice(insertedAt)])  
                 }}
-                    className="rounded-full bg-cyan-500 px-2 py-1 text-sm font-semibold text-white">
+                    className="btn-sm">
                     Add
                 </button>
             </caption>
             <ol className="rounded-lg flex flex-col gap-2">{artists.map((artist, i) => {
                 const { id, name } = artist
                 return <li key={id} className="flex flex-row gap-2"><span>#{id} {name}</span>
-                    <BtnSm
+                    <button className="btn-sm"
                         onClick={() => {
                             setArtists(artists.filter(_artist => _artist.id !== id))
                         }}>
                         Delete
-                    </BtnSm>
+                    </button>
                 </li>
             })}</ol>
         </div>
@@ -409,10 +408,119 @@ namespace LAB_8 {
             { id: 2, type: "circle", x: 250, y: 100 },
         ])
 
-        return <div className="relative bg-cyan-100 h-[10rem] w-[10rem] rounded-lg">
+        function handleClick() {
+            setShapes((ss) => {
+                return ss.map(s => {
+                    if (s.type === "circle") {
+                        return { ...s, y: s.y + 20 }
+                    }
+                    return s
+                })
+            })
+        }
 
+        return <div className="relative bg-cyan-100 h-[15rem] w-[20rem] rounded-lg p-2">
+            <button className="btn-sm" onClick={(me) => handleClick()}>Move circles down</button>
+            {shapes.map((s) => {
+                return <div key={s.id} className="absolute w-[20px] h-[20px] bg-purple-300"
+                    style={{ left: s.x, top: s.y, borderRadius: (s.type === "circle" ? "50%" : "0%") }}
+                />
+            })}
         </div>
     }
+
+    export function CounterList(): JSX.Element {
+        const [counters, setCounter] = useState<number[]>([0, 0, 0])
+        
+        function handleIncrementClick(idx: number) {
+            setCounter(counters.map((c, i) => {
+                return (i === idx) ? c + 1 : c
+            }))
+        }
+
+        return <ol>
+            {counters.map((c, i) => {
+                return <li key={i}> {c} <button onClick={(me) => handleIncrementClick(i)}>+1</button></li>
+            })}
+        </ol>
+    }
+
+    declare type TItem = { id: number, title: string, seen: boolean }
+    const INIT_ITEMS: TItem[] = [
+        { id: 0, title: "Big Bellies", seen: false },
+        { id: 1, title: "Lunar Landscape", seen: false },
+        { id: 2, title: "Terracotta Army", seen: true },
+    ]
+    function ItemList({ artworks, onToggle }: { artworks: TItem[], onToggle: (id: number, nextSeen: boolean) => void }): JSX.Element {
+        return <ol>
+            {artworks.map(a => <li key={a.id}>
+                <label>
+                    <input type="checkbox" checked={a.seen} onChange={(ce) => { onToggle(a.id, ce.target.checked) }} />
+                    {a.title}
+                </label>
+            </li>)}
+        </ol>
+    }
+    export function BucketList(): JSX.Element {
+        /*
+        const [myList, setMyList] = useState<TItem[]>(INIT_ITEMS)
+        const [yourList, setYourList] = useState<TItem[]>(INIT_ITEMS)
+        function handleToggleMyList(artworkId: number, nextSeen: boolean) {
+            if (false) {
+            const _list: TItem[] = [...myList]
+            const artwork: TItem = _list.find(item => item.id === artworkId) //ERROR
+            if (!artwork) return
+            artwork.seen = nextSeen
+            setMyList(_list)
+            }
+            const _list: TItem[] = [...myList]
+            const _idx:number = _list.findIndex(item=>item.id===artworkId)
+            if (_idex < 0) return
+            _list[_idx] = {..._list[_idx], seen:nextSeen}
+            setMyList(_list)
+        }
+        function handleToggleYourList(artworkId: number, nextSeen: boolean) {
+            const _list: TItem[] = [...yourList]
+            const artwork: TItem = _list.find(item => item.id === artworkId) //ERROR
+            if (!artwork) return
+            artwork.seen = nextSeen
+            setYourList(_list)
+        }
+            */
+
+        const [myList, updateMyList] = useImmer<TItem[]>(INIT_ITEMS)
+        const [yourList, updateYourList] = useImmer<TItem[]>(INIT_ITEMS)
+
+        function handleToggleMyList(artworkId: number, nextSeen: boolean) {
+            updateMyList(draft => {
+                const artwork: TItem = draft.find(item => item.id === artworkId)
+                artwork.seen = nextSeen
+            })
+        }
+
+        function handleToggleYouList(artworkId: number, nextSeen: boolean) {
+            updateYourList(draft => {
+                const artwork: TItem = draft.find(item => item.id === artworkId)
+                artwork.seen = nextSeen
+            })
+        }
+
+        return <>
+            <h1>Art Bucket List</h1>
+            <h2>My list of art to see:</h2>
+            <ItemList
+                artworks={myList}
+                onToggle={handleToggleMyList} />
+            <h2>Your list of art to see:</h2>
+            <ItemList
+                artworks={yourList}
+                onToggle={handleToggleYouList} />
+        </>
+    }
+}
+
+namespace LAB_9 {
+    
 }
 
 export default function Page(): JSX.Element {
@@ -451,6 +559,10 @@ export default function Page(): JSX.Element {
             <LAB_8.List />
             <hr className="my-2" />
             <LAB_8.ShapeEditor />
+            <hr className="my-2" />
+            <LAB_8.CounterList />
+            <hr className="my-2" />
+            <LAB_8.BucketList />
         </section>
     </>
 } 

@@ -5,6 +5,10 @@
   @apply font-bold py-2 px-4 rounded transition duration-200 ease-in-out;
 }
 
+@utility btn-sm {
+  @apply bg-blue-500 text-white font-bold py-1 px-2 rounded-full transition duration-200 ease-in-out;
+}
+
 /* Now you can successfully @apply 'btn' */
 @utility btn-primary {
   @apply btn bg-blue-500 text-white hover:bg-blue-700;

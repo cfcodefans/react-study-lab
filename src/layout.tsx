@@ -166,15 +166,3 @@ export interface INavProps {
 export interface IMainFrameProps extends IChildrenProps {
   navProps: INavProps
 }
-
-
-export function BtnSm({ onClick,
-  children }: {
-    children: ReactNode,
-    onClick?: MouseEventHandler }): JSX.Element {
-      
-  return <button className="btn-primary"
-    onClick={onClick}>
-    {children}
-  </button>
-} 
