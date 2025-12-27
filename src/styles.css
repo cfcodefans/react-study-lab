@@ -2,11 +2,11 @@
 
 /* Define 'btn' as a utility so Tailwind registers it */
 @utility btn {
-  @apply font-bold py-2 px-4 rounded transition duration-200 ease-in-out;
+  @apply font-semibold py-2 px-4 rounded transition duration-200 ease-in-out;
 }
 
 @utility btn-sm {
-  @apply bg-blue-500 text-white font-bold py-1 px-2 rounded-full transition duration-200 ease-in-out;
+  @apply bg-blue-400 text-white font-normal px-2 rounded-full transition duration-200 ease-in-out;
 }
 
 /* Now you can successfully @apply 'btn' */
@@ -16,6 +16,10 @@
 
 @utility btn-secondary {
   @apply btn bg-gray-200 text-gray-800 border border-gray-400 hover:bg-gray-300;
+}
+
+input[type="text"] {
+  @apply bg-slate-200 text-gray-800 rounded-full px-1
 }
 
 .app {
@@ -62,6 +66,7 @@
   .nav-toggle {
     display: none;
   }
+
   .navbar::after {
     content: "";
     position: absolute;
@@ -76,6 +81,7 @@
     border-radius: 4rem;
     z-index: 3;
   }
+
   .resizer {
     resize: horizontal;
     width: 15rem;

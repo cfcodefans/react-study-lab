@@ -1,4 +1,4 @@
-import _ from "lodash"
+import _, { wrap } from "lodash"
 import {
   JSX,
   MouseEventHandler,
@@ -168,4 +168,78 @@ export async function delay<T = void>(ms: number,
       // Use { once: true } so the listener is automatically removed after firing
       { once: true })
   })
+} 
+
+
+export type Scope<T> = T & {
+  //standard Scope Functions
+  let<R>(block: (it: T) => R): R
+  _let<R>(block: (it: T) => R): Scope<R>
+  apply(block: (it: T) => void): Scope<T>
+  also(block: (it: T) => void): Scope<T>
+  //conditional Scope Functions
+  takeIf(predicate: (it: T) => boolean): Scope<T> | null
+  takeUnless(predicate: (it: T) => boolean): Scope<T> | null
+  clone(): Scope<T>
+}
+
+// A unique identifier that only our wrap function knows about
+const IS_WRAPPED = Symbol("IS_WRAPPED")
+
+export function Wrap<T extends object>(obj: T | null): Scope<T> | null {
+  if (obj === null) return null
+
+  //1. check if the object is already wrapped
+  // we use (obj as any) because the compiler doesn't know about symbol yet
+  if ((obj as any)[IS_WRAPPED]) {
+    return obj as unknown as Scope<T>
+  }
+
+  const extensions = {
+    let: (block: Function) => {
+      return block(obj)
+    },
+
+    _let: (block: Function) => {
+      return Wrap(block(obj))
+    },
+
+    apply: function(block: Function): Scope<T> {
+      block(obj)
+      return this
+    },
+
+    also: function(block: Function): Scope<T> {
+      block(obj)
+      return this
+    },
+
+    takeIf: function(predicate: Function) {
+      return predicate(obj) ? Wrap(obj) : null
+    },
+
+    takeUnless: function(predicate: Function) {
+      return !predicate(obj) ? Wrap(obj) : null
+    },
+
+    // Clone implementation
+    clone: function() {
+      // structuredClone is a modern JS native for deep copying
+      const copy = structuredClone(obj); 
+      return Wrap(copy); 
+    }
+  }
+
+  return new Proxy(obj, {
+    get(target: T, prop: string | symbol, receiver: any) {
+      // 4. Intercept our secret key check
+      if (prop === IS_WRAPPED) return true
+      if (prop in extensions) {
+        // Bind the extension functions so 'this' refers to the Proxy
+        const func = (extensions as any)[prop]
+        return typeof func === "function" ? func.Bind(receiver) : func
+      }
+      return Reflect.get(target, prop, receiver)
+    }
+  }) as Scope<T>
 } 

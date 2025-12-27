@@ -80,12 +80,14 @@ function toggleSmoothCollapse(elementId: string): void {
 
 function _NavBar({ rootNodes }: INavProps): JSX.Element {
   return (
-    <nav className="navbar relative cf-collapose box-content portrait:h-[3rem]" id="menu_tree"    >
-      <div className=" bg-slate-200 
-        landscape:rounded-lg absolute w-full
-      inset-0 overflow-auto p-2 
-      flex 
-      landscape:flex-col portrait:flex-row portrait:item-start portrait:overflow-hidden portrait:min-h-[3rem]"      >
+    <nav className="navbar relative cf-collapose 
+    box-content portrait:h-[3rem]" 
+      id="menu_tree"    >
+      <div className="bg-white/50 backdrop-blur-sm 
+        landscape:rounded-lg absolute w-full landscape:flex-col 
+        inset-0 overflow-auto p-2 
+        flex 
+        portrait:flex-row portrait:item-start portrait:overflow-hidden portrait:min-h-[3rem]">
         <h1 className="text-center 
           bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white
           rounded-md portrait:hidden landscape:w-full"        >
@@ -115,7 +117,7 @@ function _NavBar({ rootNodes }: INavProps): JSX.Element {
                 bg-black 
                 z-50
                 left-0 top-2/4
-                overflow-hidden"      ></div>
+                overflow-hidden"  ></div>
     </nav>
   )
 }
@@ -123,13 +125,17 @@ function _NavBar({ rootNodes }: INavProps): JSX.Element {
 export const NavBar = React.memo(_NavBar)
 
 export function TopBar({ children }: IChildrenProps): JSX.Element {
-  return <header className="topbar bg-slate-200 landscape:rounded-lg p-1">
+  return <header className="topbar bg-white/50 backdrop-blur-sm
+    landscape:rounded-lg p-1">
     topbar
   </header>
 }
 
 export function MiscBar({ children }: IChildrenProps): JSX.Element {
-  return <aside className="miscbar landscape:rounded-lg bg-slate-200 p-2">
+  return <aside className="miscbar 
+    landscape:rounded-lg 
+    bg-slate-200 bg-white/50 backdrop-blur-sm 
+    p-2">
     miscbar
   </aside>
 }

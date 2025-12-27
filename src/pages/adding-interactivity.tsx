@@ -1,6 +1,7 @@
 import { JSX, MouseEventHandler, PointerEvent, ReactNode, RefObject, useEffect, useRef, useState } from "react"
 import { delay, mkMockImgUrl } from "../commons"
 import { useImmer } from "use-immer"
+import { flatMap } from "lodash";
 
 namespace LAB_1 {
     function Toolbar({ onPlayMovie, onUploadImage }: { onPlayMovie: MouseEventHandler, onUploadImage: MouseEventHandler }): JSX.Element {
@@ -386,7 +387,7 @@ namespace LAB_8 {
                     Add
                 </button>
             </caption>
-            <ol className="rounded-lg flex flex-col gap-2">{artists.map((artist, i) => {
+            <ol type="1" className="rounded-lg flex flex-col gap-2">{artists.map((artist, i) => {
                 const { id, name } = artist
                 return <li key={id} className="flex flex-row gap-2"><span>#{id} {name}</span>
                     <button className="btn-sm"
@@ -430,7 +431,7 @@ namespace LAB_8 {
     }
 
     export function CounterList(): JSX.Element {
-        const [counters, setCounter] = useState<number[]>([0, 0, 0])
+        const [counters, setCounter] = useState<number[]>([0, 1, 2])
         
         function handleIncrementClick(idx: number) {
             setCounter(counters.map((c, i) => {
@@ -438,9 +439,9 @@ namespace LAB_8 {
             }))
         }
 
-        return <ol>
+        return <ol type="1" className="flex flex-row gap-2">
             {counters.map((c, i) => {
-                return <li key={i}> {c} <button onClick={(me) => handleIncrementClick(i)}>+1</button></li>
+                return <li key={i}> {c} <button className="btn-sm" onClick={(me) => handleIncrementClick(i)}>+1</button></li>
             })}
         </ol>
     }
@@ -452,7 +453,7 @@ namespace LAB_8 {
         { id: 2, title: "Terracotta Army", seen: true },
     ]
     function ItemList({ artworks, onToggle }: { artworks: TItem[], onToggle: (id: number, nextSeen: boolean) => void }): JSX.Element {
-        return <ol>
+        return <ol type="1" className="flex flex-row gap-2">
             {artworks.map(a => <li key={a.id}>
                 <label>
                     <input type="checkbox" checked={a.seen} onChange={(ce) => { onToggle(a.id, ce.target.checked) }} />
@@ -520,7 +521,132 @@ namespace LAB_8 {
 }
 
 namespace LAB_9 {
-    
+    declare type TProduct = { id: number, name: string, count: number }
+    const INIT_PRODUCTS: TProduct[] = [
+        { id: 0, name: "Baklava", count: 1, }, 
+        { id: 1, name: "Cheese", count: 5, },
+        { id: 2, name: "Spaghetti", count: 2, }]
+    export function ShoppingCart(): JSX.Element {
+        const [products, setProducts] = useState<TProduct[]>([...INIT_PRODUCTS])
+
+        function handleIncrementClick(productId: number) {
+            const _products: TProduct[] = [...products]
+            const idx: number = _products.findIndex(p => p.id === productId)
+            if (idx < 0) return
+            const _product: TProduct = { ..._products[idx] }
+            _product.count++
+            _products[idx] = _product
+            setProducts(_products)
+        }
+        function handleDecreaseClick(productId: number) {
+            const _products: TProduct[] = [...products]
+            const idx: number = _products.findIndex(p => p.id === productId)
+            if (idx < 0) return
+            const _product: TProduct = { ..._products[idx] }
+            _product.count--
+            _products[idx] = _product
+            if (_product.count <= 0) {
+                _products.splice(idx, 1)
+            }
+            setProducts(_products)
+        }
+
+        return <ol type="1" className="flex flex-row gap-2">{products.map(product => {
+            return <li key={product.id}>
+                {product.name} (<b>{product.count}</b>) &nbsp;
+                <button className="btn-sm" onClick={(ce) => handleIncrementClick(product.id)}>+</button>
+                <button className="btn-sm" onClick={(ce) => handleDecreaseClick(product.id)}>-</button>
+            </li>
+        })}
+            <li><button className="btn-sm" onClick={(ce) => setProducts([...INIT_PRODUCTS])}>Reset</button></li>
+        </ol>
+    }
+
+    declare type TTodo = { id: number, title: string, done: boolean }
+    const INIT_TODOS: TTodo[] = [
+        { id: 0, title: "Buy milk", done: true },
+        { id: 1, title: "Eat tacos", done: false },
+        { id: 2, title: "Brew tea", done: false },
+    ]
+    function TaskList({ todos, 
+        onChangeTodo, 
+        onDeleteTodo }: { todos: TTodo[], 
+            onChangeTodo: (t: TTodo) => void,
+            onDeleteTodo: (t: TTodo) => void }): JSX.Element {
+        return <ol type="1" className="flex flex-col gap-2">
+            {todos.map(t => {
+                return <li key={t.id}>
+                    <Task todo={t} onChange={onChangeTodo} onDelete={onDeleteTodo} />
+                </li>
+            })}
+        </ol>
+    }
+    function Task({ todo, 
+        onChange, 
+        onDelete }: { todo: TTodo, 
+            onChange: (t: TTodo) => void,
+            onDelete: (t: TTodo) => void }): JSX.Element {
+        const [isEditing, setIsEditing] = useState<boolean>(false)
+
+        return <label className="flex flex-row gap-2">
+            <input type="checkbox" 
+                checked={todo.done} 
+                onChange={(ce) => { onChange({ ...todo, done: ce.target.checked }) }} />  
+            {isEditing && <>
+                <input value={todo.title} 
+                    type="text"
+                    onChange={(ce) => { onChange({ ...todo, title: ce.target.value }) }} />
+                <button className="btn-sm" onClick={(me) => setIsEditing(false)}>Save</button>
+            </>}    
+            {!isEditing && <>
+                {todo.title}
+                <button className="btn-sm" onClick={(me) => setIsEditing(true)}>Edit</button>
+            </>}    
+            <button className="btn-sm" onClick={(me) => onDelete(todo)}>Delete</button>
+        </label>
+    }
+    function AddTodo({ onAddTodo }: { onAddTodo: (t: string) => void }): JSX.Element {
+        const [title, setTitle] = useState<string>("")
+        return <>
+            <input placeholder="Add todo" type="text"
+                value={title}
+                onChange={(ce) => setTitle(ce.target.value)} />
+            <button className="btn-sm" onClick={(ce) => {
+                setTitle("")
+                onAddTodo(title)
+            }}>Add</button>
+        </>
+    }
+
+    export function TaskApp(): JSX.Element {
+        const [todos, updateTodos] = useImmer<TTodo[]>(INIT_TODOS)
+        function onAddTodo(title: string) {
+            updateTodos(draft => {
+                draft.push({ id: todos.length, title, done: false })
+            })
+        }
+        function onChangeTodo(todo: TTodo) {
+            updateTodos(draft => {
+                const idx: number = draft.findIndex(t => t.id === todo.id)
+                if (idx < 0) return 
+                draft[idx] = todo
+            })
+        }
+        function onDeleteTodo(todo: TTodo) {
+            updateTodos(draft => {
+                const idx: number = draft.findIndex(t => t.id === todo.id)
+                if (idx < 0) return 
+                draft.splice(idx, 1)
+            })
+        }
+
+        return <div className="flex flex-col">
+            <div className="flex flex-row"><AddTodo onAddTodo={onAddTodo} /></div>
+            <TaskList todos={todos}
+                onChangeTodo={onChangeTodo}
+                onDeleteTodo={onDeleteTodo} />
+        </div>
+    }
 }
 
 export default function Page(): JSX.Element {
@@ -563,6 +689,10 @@ export default function Page(): JSX.Element {
             <LAB_8.CounterList />
             <hr className="my-2" />
             <LAB_8.BucketList />
+            <hr className="my-2" />
+            <LAB_9.ShoppingCart />
+            <hr className="my-2" />
+            <LAB_9.TaskApp />
         </section>
     </>
 } 

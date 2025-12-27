@@ -6,7 +6,7 @@ import path, { resolve } from "path"
 export default defineConfig({
     // Set the root to "public" because that"s where index.html lives
     // root: "pages",
-    plugins: [react(),tailwindcss()],
+    plugins: [react(), tailwindcss()],
     server: {
         fs: {
             // Allow Vite to serve files from the level above "public" (where src is)
