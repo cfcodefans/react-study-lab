@@ -640,8 +640,8 @@ namespace LAB_9 {
             })
         }
 
-        return <div className="flex flex-col">
-            <div className="flex flex-row"><AddTodo onAddTodo={onAddTodo} /></div>
+        return <div className="flex flex-col gap-2">
+            <div className="flex flex-row gap-2"><AddTodo onAddTodo={onAddTodo} /></div>
             <TaskList todos={todos}
                 onChangeTodo={onChangeTodo}
                 onDeleteTodo={onDeleteTodo} />
