@@ -22,6 +22,10 @@ input[type="text"] {
   @apply bg-slate-200 text-gray-800 rounded-full px-1
 }
 
+select {
+  @apply bg-slate-200 text-gray-800 rounded-full px-1
+}
+
 textarea {
   @apply bg-slate-200 text-gray-800 rounded-full px-1
 }
