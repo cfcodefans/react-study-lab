@@ -30,6 +30,10 @@ textarea {
   @apply bg-slate-200 text-gray-800 rounded-full px-1
 }
 
+h2 {
+  @apply font-bold
+}
+
 .app {
   font-family: sans-serif;
 }

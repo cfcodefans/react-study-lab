@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, JSX, useEffect, useState } from "react"
+import { ChangeEvent, FormEvent, JSX, ReactNode, useEffect, useState } from "react"
 import { delay, mkMockImgUrl } from "../commons"
 import { useImmer } from "use-immer";
 
@@ -515,7 +515,126 @@ namespace LAB_2 {
 }
 
 namespace LAB_3 {
+    function Panel({
+        title, children, isActive, onShow
+    }: {
+        title: string, children: ReactNode, isActive: boolean, onShow: () => void
+    }): JSX.Element {
+        return <section >
+            <h3 className="font-semibold">{title}</h3>
+            {isActive 
+                ? <p>{children}</p>
+                : <button className="btn-sm" onClick={onShow}>Show</button>}
+        </section>
+    }
+    export function Accordion(): JSX.Element {
+        const [activeIdx, setActiveIdx] = useState<number>(0)
+        return <div className="flex flex-col gap-2 rounded-lg bg-blue-100 p-3">
+            <h2>Almaty, Kazakhstan</h2>
+            <Panel
+                title="About"
+                isActive={activeIdx === 0}
+                onShow={() => setActiveIdx(0)}            >
+                With a population of about 2 million, Almaty is Kazakhstan"s largest city. From 1929 to 1997, it was its capital city.
+            </Panel>
+            <Panel
+                title="Etymology"
+                isActive={activeIdx === 1}
+                onShow={() => setActiveIdx(1)}            >
+                The name comes from <span lang="kk-KZ">алма</span>, the Kazakh word for "apple" and is often translated as "full of apples". In fact, the region surrounding Almaty is thought to be the ancestral home of the apple, and the wild <i lang="la">Malus sieversii</i> is considered a likely candidate for the ancestor of the modern domestic apple.
+            </Panel>
+        </div>
+    }
 
+    function MockInput({ 
+        label, text, onChange 
+    }: { 
+        label: string, text: string, onChange: (string) => void 
+    }): JSX.Element {
+        return <label>
+            {label}
+            &nbsp;
+            <input type="text" value={text} onChange={(ce) => onChange(ce.target.value)} />
+        </label>
+    }
+    export function SynchedInputs(): JSX.Element {
+        const [text, setText] = useState<string>("")
+        return <div className="flex flex-row gap-2">
+            <MockInput label="First Input" text={text} onChange={setText} />
+            <MockInput label="Second Input" text={text} onChange={setText} />
+        </div>
+    }
+
+    declare type TFood = { id: number, name: string, description: string }
+    const foods: TFood[] = [{
+        id: 0,
+        name: "Sushi",
+        description: "Sushi is a traditional Japanese dish of prepared vinegared rice"
+    }, {
+        id: 1,
+        name: "Dal",
+        description: "The most common way of preparing dal is in the form of a soup to which onions, tomatoes and various spices may be added"
+    }, {
+        id: 2,
+        name: "Pierogi",
+        description: "Pierogi are filled dumplings made by wrapping unleavened dough around a savoury or sweet filling and cooking in boiling water"
+    }, {
+        id: 3,
+        name: "Shish kebab",
+        description: "Shish kebab is a popular meal of skewered and grilled cubes of meat."
+    }, {
+        id: 4,
+        name: "Dim sum",
+        description: "Dim sum is a large range of small dishes that Cantonese people traditionally enjoy in restaurants for breakfast and lunch"
+    }]
+    function filterItems(items: TFood[], query: string): TFood[] {
+        query = query.toLowerCase().trim()
+        if (query.length === 0) return items
+        return items.filter(food => {
+            return food
+                .name
+                .split(" ")
+                .map(word => word.toLowerCase())
+                .some(word => word.startsWith(query))
+        })
+    }
+    function List({ foods }: { foods: TFood[] }): JSX.Element {
+        return <table>
+            <tbody>
+                {foods.map(food => {
+                    return <tr key={food.id}>
+                        <td>{food.name}</td>
+                        <td>{food.description}</td>
+                    </tr>
+                })}
+            </tbody>
+        </table>
+    }
+    function SearchBar({ 
+        text, updateText 
+    }: {
+        text: string, updateText: (string) => void
+    }): JSX.Element {
+        return <label>
+            Search: &nbsp;
+            <input type="text" 
+                value={text} 
+                onChange={(ce) => updateText(ce.target.value)} />
+        </label>        
+    }
+    export function FilterableList(): JSX.Element {
+        const [items, updateItems] = useState<TFood[]>(foods)
+        const [query, setQuery] = useState<string>("")
+        function callQuery(q: string) {
+            setQuery(q)
+            updateItems(filterItems(foods, q))
+        }
+        return <div className="m-3">
+            <SearchBar text={query} updateText={callQuery} />
+            <br />
+            <List foods={items} />
+        </div>
+    }
 }
 
 export default function Page(): JSX.Element {
@@ -537,5 +656,9 @@ export default function Page(): JSX.Element {
         <LAB_2.MailClient2 />
         <hr className="m-4" />
         <h2>Sharing state between components </h2>
+        <LAB_3.Accordion />
+        <br />
+        <LAB_3.SynchedInputs />
+        <LAB_3.FilterableList />
     </>
 } 
