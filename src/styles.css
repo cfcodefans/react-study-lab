@@ -30,7 +30,7 @@ textarea {
   @apply bg-slate-200 text-gray-800 rounded-full px-1
 }
 
-h2 {
+h2, h1 {
   @apply font-bold
 }
 

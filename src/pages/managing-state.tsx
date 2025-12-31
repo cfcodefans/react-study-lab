@@ -637,16 +637,120 @@ namespace LAB_3 {
     }
 }
 
+namespace LAB_4 {
+    function Counter({ title }: { title?: string }): JSX.Element {
+        const [score, setScore] = useState<number>(0)
+        const [hover, setHover] = useState<boolean>(false)
+
+        return <div className={`rounded-lg ${hover ? "bg-blue-100" : ""}
+            p-2 `}
+            onPointerEnter={(pe) => setHover(true)}
+            onPointerLeave={(pe) => setHover(false)}>
+
+            <h1 className="text-center">{title ?? ""} {score}</h1>
+            <button className="btn-sm" onClick={ce => setScore(score + 1)}>
+                Add One
+            </button>
+        </div>
+    }
+    export function App(): JSX.Element {
+        const [showB, setShowB] = useState<boolean>(true)
+
+        return <div className="flex flex-row gap-2">
+            <Counter />
+            {showB && <Counter />}
+            <div className={!showB ? "hidden" : ""}><Counter /></div>
+            <label>
+                <input type="checkbox" 
+                    checked={showB}
+                    onChange={(ce) => setShowB(ce.target.checked)} />
+                Render the second counter
+            </label>
+        </div>
+    }
+
+    export function App2(): JSX.Element {
+        const [isPlayA, setIsPlayA] = useState<boolean>(true)
+        return <div className="flex flex-row gap-2">
+            {isPlayA ? <Counter title="Taylor" /> : <Counter title="Sarah" />}
+            {isPlayA ? <Counter key="Taylor" title="Taylor with key" /> 
+                : <Counter key="Sarah" title="Sarah with key" />}
+            <button className="btn-sm" onClick={ce => setIsPlayA(!isPlayA)}>
+                Next Player!
+            </button>
+        </div>
+    }
+
+    declare type TContact = { id: number, name: string, email: string }
+    const contacts: TContact[] = [
+        { id: 0, name: "Taylor", email: "taylor@mail.com" },
+        { id: 1, name: "Alice", email: "alice@mail.com" },
+        { id: 2, name: "Bob", email: "bob@mail.com" }
+    ]
+    function ChatBox({ contact }: { contact: TContact }): JSX.Element {
+        const [text, setText] = useState<string>("")
+        return <section>
+            <textarea value={text}
+                onChange={ce => setText(ce.target.value)}
+                placeholder={`Chat to ${contact.name}`} />
+            <br />
+            <button className="btn-sm">Send to {contact.email}</button>
+        </section>
+    }
+    function ContactList({
+        contacts, selected, onSelect
+    }: { 
+        contacts: TContact[], selected: TContact, onSelect: (TContact) => void 
+    }): JSX.Element {
+        return <section>
+            <ol className="gap-2 flex-col flex">{
+                contacts.map(c => {
+                    return <li key={c.id}>
+                        <button className={`btn-sm ${c.id === selected.id ? "bg-blue-500" : ""}`} 
+                            onClick={ce => onSelect(c)}>
+                            {c.name}
+                        </button>
+                    </li>
+                })
+            }</ol>
+        </section>        
+    }
+    export function Messenger(): JSX.Element {
+        const [selected, setSelected] = useState<TContact>(contacts[0])
+        return <div className="m-4 grid grid-cols-2 gap-2 auto-cols-min grid-flow-col w-content">
+            <ContactList contacts={contacts}
+                selected={selected}
+                onSelect={(c: TContact) => setSelected(c)} />
+            <ChatBox key={selected.id} contact={selected} />
+        </div>
+    }
+
+    function Form(): JSX.Element {
+        const [text, setText] = useState<string>("")
+        return <textarea value={text} onChange={ce => setText(ce.target.value)} />
+    }
+    export function Challenge1(): JSX.Element {
+        const [showHint, setShowHint] = useState<boolean>(false)
+        return <div className="m-4">
+            {showHint && <p><i>Hint: Your favorite city?</i></p>}
+            <Form />
+            <button onClick={(ce) => {
+                setShowHint(!showHint);
+            }}>{showHint ? "Hide" : "Show"} hint</button>
+        </div>
+    }
+}
+
 export default function Page(): JSX.Element {
     return <>
         <a href="https://react.dev/learn/managing-state" target="_blank"><h1>Managing State</h1></a>
         <hr className="m-4" />
-        <h2>Reacting to input with state</h2>
+        <h2>1. Reacting to input with state</h2>
         <LAB_1.Form />
         <LAB_1.Picture />
         <LAB_1.ProfileEditor />
         <hr className="m-4" />
-        <h2>Choosing the state structure </h2>
+        <h2>2. Choosing the state structure </h2>
         <LAB_2.Form />
         <LAB_2.TravePlan />
         <LAB_2.ClockCase />
@@ -655,10 +759,15 @@ export default function Page(): JSX.Element {
         <br />
         <LAB_2.MailClient2 />
         <hr className="m-4" />
-        <h2>Sharing state between components </h2>
+        <h2>3. Sharing state between components </h2>
         <LAB_3.Accordion />
         <br />
         <LAB_3.SynchedInputs />
         <LAB_3.FilterableList />
+        <h2>4. Preserving and Resetting State </h2>
+        <LAB_4.App />
+        <LAB_4.App2 />
+        <LAB_4.Messenger />
+        <LAB_4.Challenge1 />
     </>
 } 
