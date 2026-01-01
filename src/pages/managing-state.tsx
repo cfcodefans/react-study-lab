@@ -734,9 +734,160 @@ namespace LAB_4 {
         return <div className="m-4">
             {showHint && <p><i>Hint: Your favorite city?</i></p>}
             <Form />
-            <button onClick={(ce) => {
+            <br />
+            <button className="btn-sm" onClick={(ce) => {
                 setShowHint(!showHint);
             }}>{showHint ? "Hide" : "Show"} hint</button>
+        </div>
+    }
+
+    function Field({ label }: { label: string }): JSX.Element {
+        const [text, setText] = useState<string>("")
+        return <label>
+            {label}:&nbsp;
+            <input
+                type="text"
+                value={text}
+                placeholder={label}
+                onChange={e => setText(e.target.value)} />
+        </label>
+    }
+    export function Challenge2(): JSX.Element {
+        const [reversed, setReversed] = useState<boolean>(false)
+        const checkbox: ReactNode = <label>
+            <input type="checkbox"
+                checked={reversed}
+                onChange={ce => setReversed(ce.target.checked)} />
+            Reverse order
+        </label>
+        return reversed 
+            ? <div className="flex flex-col gap-2">
+                <Field key="last-name" label="Last name" /> 
+                <Field key="first-name" label="First name" />
+                {checkbox}
+            </div> : <div className="flex flex-col gap-2">
+                <Field key="first-name" label="First name" />
+                <Field key="last-name" label="Last name" /> 
+                {checkbox}
+            </div>
+    }
+
+    function EditContact({
+        initialData, onSave
+    }: {
+        initialData: TContact, onSave: (contact: TContact) => void
+    }): JSX.Element {
+        const [name, setName] = useState<string>(initialData.name)
+        const [email, setEmail] = useState<string>(initialData.email)
+        return <section>
+            <label>
+                Name:&nbsp;
+                <input type="text" value={name} onChange={ce => setName(ce.target.value)} />
+            </label>
+            <label>
+                Email:&nbsp;
+                <input type="text" value={email} onChange={ce => setEmail(ce.target.value)} />
+            </label>
+            <button onClick={ce => {
+                onSave({ ...initialData, name, email })  
+            }} className="btn-sm">Save</button>
+            <button onClick={ce => {
+                setName(initialData.name)
+                setEmail(initialData.email)
+                onSave(initialData)
+            }} className="btn-sm">Reset</button>
+        </section>
+    }
+
+    function ContactBar({ 
+        contacts, selectedId, onSelect
+    }: { contacts: TContact[], selectedId: number, onSelect: (id: number) => void }): JSX.Element {
+        return <section>
+            <ol className="flex flex-row gap-2">
+                {contacts.map(contact => {
+                    return <li key={contact.id}>
+                        <button className="btn-sm"
+                            onClick={ce => onSelect(contact.id)}>
+                            {contact.id === selectedId 
+                                ? <b>{contact.name}</b>
+                                : contact.name}
+                        </button>
+                    </li>
+                })}
+            </ol>
+        </section>
+    }
+    export function Challenge3(): JSX.Element {
+        const [items, updateContacts] = useImmer<TContact[]>([...contacts])
+        const [selectedId, setSelectedId] = useState<number>(0)
+        const selectedContact: TContact = items.find(c => c.id === selectedId)
+        function onSave(updated: TContact) {
+            updateContacts(draft => {
+                const idx: number = draft.findIndex(c => c.id === updated.id)
+                if (idx < 0) return
+                draft[idx] = updated
+            })
+        }
+        return <div className="m-3 flex flex-col gap-2">
+            <ContactBar contacts={items}
+                selectedId={selectedId}
+                onSelect={id => setSelectedId(id)} />
+            <hr />
+            <EditContact key={selectedContact.id} initialData={selectedContact} onSave={onSave} />
+        </div>
+    }
+
+    declare type TImage = { place: string, src: string }
+    const images: TImage[] = [{ place: "Penang, Malaysia", src: mkMockImgUrl("FJeJR8M.jpg") },
+    { place: "Lisbon, Portugal", src: mkMockImgUrl("dB2LRbj.jpg") }, 
+    { place: "Bilbao, Spain", src: mkMockImgUrl("z08o2TS.jpg") }, 
+    { place: "Valparaíso, Chile", src: mkMockImgUrl("Y3utgTi.jpg") }, 
+    { place: "Schwyz, Switzerland", src: mkMockImgUrl("JBbMpWY.jpg") }, 
+    { place: "Prague, Czechia", src: mkMockImgUrl("QwUKKmF.jpg") }, 
+    { place: "Ljubljana, Slovenia", src: mkMockImgUrl("3aIiwfm.jpg") }]
+
+    export function Challenge4(): JSX.Element {
+        const [index, setIndex] = useState<number>(0)
+        function onNext() {
+            setIndex(i => (i + 1) % images.length)
+        }
+        const { place, src } = images[index]
+        return <>
+            <button className="btn-sm" onClick={onNext} >Next            </button>
+            <h3>Image {index + 1} of {images.length}</h3>
+            <img key={place} className="rounded-lg" src={src} />
+            <p>{place}</p>
+        </>
+    }
+
+    function ContactItem({ contact }: { contact: TContact }): JSX.Element {
+        const [expanded, setExpanded] = useState<boolean>(false)
+        const { name, email } = contact
+        return <>
+            <p><b>{name}</b></p>
+            {expanded && <p><i>{email}</i></p>}
+            <button className="btn-sm" onClick={ce => setExpanded(!expanded)}>
+                {expanded ? "Hide" : "Show"} email
+            </button>
+        </>
+    }
+
+    export function Challenge5(): JSX.Element {
+        const [reversed, setReversed] = useState<boolean>(false)
+        const displayContacts: TContact[] = [...contacts]
+        if (reversed) displayContacts.reverse()
+        return <div className="m-3">
+            <label>
+                <input type="checkbox" checked={reversed} onChange={ce => setReversed(ce.target.checked)} />
+                &nbsp; Show in reverse order
+            </label>
+            <ol>
+                {displayContacts.map(c => {
+                    return <li key={c.id}>
+                        <ContactItem contact={c} />
+                    </li>
+                })}
+            </ol>
         </div>
     }
 }
@@ -769,5 +920,9 @@ export default function Page(): JSX.Element {
         <LAB_4.App2 />
         <LAB_4.Messenger />
         <LAB_4.Challenge1 />
+        <LAB_4.Challenge2 />
+        <LAB_4.Challenge3 />
+        <LAB_4.Challenge4 />
+        <LAB_4.Challenge5 />
     </>
 } 

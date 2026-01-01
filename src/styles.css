@@ -19,7 +19,7 @@
 }
 
 input[type="text"] {
-  @apply bg-slate-200 text-gray-800 rounded-full px-1
+  @apply bg-slate-200 text-gray-800 rounded-full px-2
 }
 
 select {
@@ -27,7 +27,7 @@ select {
 }
 
 textarea {
-  @apply bg-slate-200 text-gray-800 rounded-full px-1
+  @apply bg-slate-200 text-gray-800 rounded-lg px-1
 }
 
 h2, h1 {
