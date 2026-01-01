@@ -31,6 +31,13 @@ export const NAV_NODES: IPaneProps[] = iterateTree(
       level: 1,
       children: [
         {
+          value: "reducer-context",
+          label: "Reducer and Context",
+          level: 2,
+          pane: lazy(() => import("./reducer-context")),
+          children: null
+        },
+        {
           value: "managing-state",
           label: "Managing State",
           level: 2,
