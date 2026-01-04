@@ -243,3 +243,12 @@ export function Wrap<T extends object>(obj: T | null): Scope<T> | null {
     }
   }) as Scope<T>
 } 
+
+export function replaceIf<T>(arr: T[], predicate: (el: T, i: number) => boolean, newValue: T): T[] {
+  return arr.map((el, i) => {
+    if (predicate(el, i)) 
+      return newValue 
+    else 
+      return el
+  })
+} 

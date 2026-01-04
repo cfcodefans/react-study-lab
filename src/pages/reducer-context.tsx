@@ -1,5 +1,5 @@
-import { ChangeEvent, FormEvent, JSX, ReactNode, useEffect, useState } from "react"
-import { delay, mkMockImgUrl } from "../commons"
+import { ChangeEvent, FormEvent, JSX, ReactNode, useEffect, useReducer, useState } from "react"
+import { delay, mkMockImgUrl, replaceIf } from "../commons"
 import { useImmer } from "use-immer"
 
 
@@ -79,6 +79,39 @@ namespace LAB_1 {
             />
         </div>
     }
+
+    export function TaskApp2(): JSX.Element {
+        const [tasks, dispatcher] = useReducer(TaskReducer, initialTasks)
+        return <div className="flex flex-col gap-2">
+            <h1>Prague itinerary</h1>
+            <div>
+                <AddTask onAddTask={(text: string) => dispatcher({ text, type: "added" })} />
+            </div>
+            <TaskList tasks={tasks}
+                onChange={(task: TTask) => dispatcher({ ...task, type: "changed" })}
+                onDelete={(id: number) => dispatcher({ id, type: "deleted" })}
+            />
+        </div>
+    }
+
+    function TaskReducer(tasks: TTask[], action: { type: string } & Partial<TTask>): TTask[] {
+        switch (action.type) {
+            case "added": {
+                return [...tasks, { id: action.id ?? nextId++, text: action.text ?? "", done: false }]
+            }
+            case "changed": {
+                return replaceIf(tasks, 
+                    (t, i) => t.id === action.id, 
+                    { id: action.id!!, text: action.text!!, done: action.done!! })
+            }
+            case "deleted": {
+                return tasks.filter(t => t.id !== action.id)
+            }
+            default: {
+                throw new Error(`Unknown action: ${action.text}`)
+            }
+        }
+    }
 }
 
 export default function Page(): JSX.Element {
@@ -87,5 +120,7 @@ export default function Page(): JSX.Element {
         <hr className="m-4" />
         <h2>1. Extracting State Logic into a Reducer</h2>
         <LAB_1.TaskApp />
+        <br />
+        <LAB_1.TaskApp2 />
     </>
 } 
