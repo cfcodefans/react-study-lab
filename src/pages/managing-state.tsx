@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, JSX, ReactNode, useEffect, useState } from "react"
 import { delay, mkMockImgUrl } from "../commons"
-import { useImmer } from "use-immer";
+import { useImmer } from "use-immer" 
 
 namespace LAB_1 {
     async function submitForm(answer: string) {
